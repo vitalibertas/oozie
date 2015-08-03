@@ -1,0 +1,56 @@
+<workflow-app name="orion_flat" xmlns="uri:oozie:workflow:0.4">
+  <parameters>
+    <property>
+      <name>YEAR</name>
+    </property>
+    <property>
+      <name>MONTH</name>
+    </property>
+    <property>
+      <name>DAY</name>
+    </property>
+  </parameters>
+  <credentials>
+    <credential name="hcat" type="hcat">
+      <property>
+        <name>hcat.metastore.uri</name>
+        <value>${hcatMetastoreUri}</value>
+      </property>
+      <property>
+        <name>hcat.metastore.principal</name>
+        <value>${hcatMetastorePrincipal}</value>
+      </property>
+    </credential>
+  </credentials>
+  <start to="RunHiveQuery"/>
+  <action name="RunHiveQuery" cred="hcat">
+    <hive xmlns="uri:oozie:hive-action:0.5">
+      <job-tracker>${jobTracker}</job-tracker>
+      <name-node>${nameNode}</name-node>
+      <job-xml>${oozieShareHiveConf}</job-xml>
+      <script>orion_flat_populate.sql</script>
+      <param>YEAR=${YEAR}</param>
+      <param>MONTH=${MONTH}</param>
+      <param>DAY=${DAY}</param>
+    </hive>
+    <ok to="end"/>
+    <error to="SendFailureEmail"/>
+  </action>
+  <action name="SendFailureEmail">
+    <email xmlns="uri:oozie:email-action:0.1">
+      <to>me@email.com,you@email.com</to>
+      <cc>copy@email.com</cc>
+      <subject>Oozie notification for orion_flat ${wf:id()}</subject>
+      <body>The orion_flat wf ${wf:id()} failed.</body>
+    </email>
+    <ok to="kill"/>
+    <error to="emailerrormessage"/>
+  </action>
+  <kill name="emailerrormessage">
+      <message>Error E-Mail failed to send: [${wf:errorMessage(wf:lastErrorNode())}]</message>
+  </kill>
+  <kill name="kill">
+    <message>Action failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+  </kill>
+  <end name="end"/>
+</workflow-app>
