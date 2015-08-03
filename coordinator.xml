@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coordinator-app name="orion_flat-coord" start="2015-07-30T08:00Z" end="2015-07-31T12:00Z" frequency="${coord:days(1)}" timezone="America/Phoenix"
+                 xmlns="uri:oozie:coordinator:0.4"
+                 xmlns:sla="uri:oozie:sla:0.2">
+  <datasets>
+    <dataset name="customer_snap" frequency="${coord:endOfDays(1)}" initial-instance="2015-07-20T07:00Z" timezone="America/Phoenix">
+      <uri-template>${nameNode}/feed-data/fos_orion/snap-success/customer_snap/${YEAR}-${MONTH}-${DAY}</uri-template>
+      <done-flag>_SUCCESS</done-flag>
+    </dataset>
+    <dataset name="account_snap" frequency="${coord:endOfDays(1)}" initial-instance="2015-07-20T07:00Z" timezone="America/Phoenix">
+      <uri-template>${nameNode}/feed-data/fos_orion/snap-success/account_snap/${YEAR}-${MONTH}-${DAY}</uri-template>
+      <done-flag>_SUCCESS</done-flag>
+    </dataset>
+    <dataset name="accountattribute_snap" frequency="${coord:endOfDays(1)}" initial-instance="2015-07-20T07:00Z" timezone="America/Phoenix">
+      <uri-template>${nameNode}/feed-data/fos_orion/snap-success/accountattribute_snap/${YEAR}-${MONTH}-${DAY}</uri-template>
+      <done-flag>_SUCCESS</done-flag>
+    </dataset>
+    <dataset name="productattribute_snap" frequency="${coord:endOfDays(1)}" initial-instance="2015-07-20T07:00Z" timezone="America/Phoenix">
+      <uri-template>${nameNode}/feed-data/fos_orion/snap-success/productattribute_snap/${YEAR}-${MONTH}-${DAY}</uri-template>
+      <done-flag>_SUCCESS</done-flag>
+    </dataset>
+    <dataset name="attributetype_snap" frequency="${coord:endOfDays(1)}" initial-instance="2015-07-20T07:00Z" timezone="America/Phoenix">
+      <uri-template>${nameNode}/feed-data/fos_orion/snap-success/attributetype_snap/${YEAR}-${MONTH}-${DAY}</uri-template>
+      <done-flag>_SUCCESS</done-flag>
+    </dataset>
+    <dataset name="accountattributeelement_snap" frequency="${coord:endOfDays(1)}" initial-instance="2015-07-20T07:00Z" timezone="America/Phoenix">
+      <uri-template>${nameNode}/feed-data/fos_orion/snap-success/accountattributeelement_snap/${YEAR}-${MONTH}-${DAY}</uri-template>
+      <done-flag>_SUCCESS</done-flag>
+    </dataset>
+    <dataset name="productattributeelement_snap" frequency="${coord:endOfDays(1)}" initial-instance="2015-07-20T07:00Z" timezone="America/Phoenix">
+      <uri-template>${nameNode}/feed-data/fos_orion/snap-success/productattributeelement_snap/${YEAR}-${MONTH}-${DAY}</uri-template>
+      <done-flag>_SUCCESS</done-flag>
+    </dataset>
+    <dataset name="elementtype_snap" frequency="${coord:endOfDays(1)}" initial-instance="2015-07-20T07:00Z" timezone="America/Phoenix">
+      <uri-template>${nameNode}/feed-data/fos_orion/snap-success/elementtype_snap/${YEAR}-${MONTH}-${DAY}</uri-template>
+      <done-flag>_SUCCESS</done-flag>
+    </dataset>
+    <dataset name="status_snap" frequency="${coord:endOfDays(1)}" initial-instance="2015-07-20T07:00Z" timezone="America/Phoenix">
+      <uri-template>${nameNode}/feed-data/fos_orion/snap-success/status_snap/${YEAR}-${MONTH}-${DAY}</uri-template>
+      <done-flag>_SUCCESS</done-flag>
+    </dataset>
+  </datasets>
+  <input-events>
+    <data-in name="customer_snap" dataset="customer_snap">
+      <start-instance>${coord:current(-1)}</start-instance>
+      <end-instance>${coord:current(-1)}</end-instance>
+    </data-in>
+    <data-in name="account_snap" dataset="account_snap">
+      <start-instance>${coord:current(-1)}</start-instance>
+      <end-instance>${coord:current(-1)}</end-instance>
+    </data-in>
+    <data-in name="accountattribute_snap" dataset="accountattribute_snap">
+      <start-instance>${coord:current(-1)}</start-instance>
+      <end-instance>${coord:current(-1)}</end-instance>
+    </data-in>
+    <data-in name="productattribute_snap" dataset="productattribute_snap">
+      <start-instance>${coord:current(-1)}</start-instance>
+      <end-instance>${coord:current(-1)}</end-instance>
+    </data-in>
+    <data-in name="attributetype_snap" dataset="attributetype_snap">
+      <start-instance>${coord:current(-1)}</start-instance>
+      <end-instance>${coord:current(-1)}</end-instance>
+    </data-in>
+    <data-in name="accountattributeelement_snap" dataset="accountattributeelement_snap">
+      <start-instance>${coord:current(-1)}</start-instance>
+      <end-instance>${coord:current(-1)}</end-instance>
+    </data-in>
+    <data-in name="productattributeelement_snap" dataset="productattributeelement_snap">
+      <start-instance>${coord:current(-1)}</start-instance>
+      <end-instance>${coord:current(-1)}</end-instance>
+    </data-in>
+    <data-in name="elementtype_snap" dataset="elementtype_snap">
+      <start-instance>${coord:current(-1)}</start-instance>
+      <end-instance>${coord:current(-1)}</end-instance>
+    </data-in>
+    <data-in name="status_snap" dataset="status_snap">
+      <start-instance>${coord:current(-1)}</start-instance>
+      <end-instance>${coord:current(-1)}</end-instance>
+    </data-in>
+  </input-events>
+  <action>
+    <workflow>
+      <app-path>${nameNode}/user/hdp_hosting/oozie/orion_flat/</app-path>
+      <configuration>
+        <property>
+          <name>YEAR</name>
+          <value>${coord:formatTime(coord:dateOffset(coord:nominalTime(), -1, 'DAY'), 'yyyy')}</value>
+        </property>
+        <property>
+          <name>MONTH</name>
+          <value>${coord:formatTime(coord:dateOffset(coord:nominalTime(), -1, 'DAY'), 'M')}</value>
+        </property>
+        <property>
+          <name>DAY</name>
+          <value>${coord:formatTime(coord:dateOffset(coord:nominalTime(), -1, 'DAY'), 'd')}</value>
+        </property>
+      </configuration>
+    </workflow>
+    <sla:info>
+      <sla:nominal-time>${coord:nominalTime()}</sla:nominal-time>
+      <sla:should-start>${1 * MINUTES}</sla:should-start>
+      <sla:should-end>${1 * MINUTES}</sla:should-end>
+      <sla:alert-events>start_miss,end_miss</sla:alert-events>
+      <sla:alert-contact>alert@email.com</sla:alert-contact>
+    </sla:info>
+  </action>
+</coordinator-app>
